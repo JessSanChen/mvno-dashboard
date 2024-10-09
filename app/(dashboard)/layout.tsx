@@ -74,21 +74,21 @@ function DesktopNav() {
           <Home className="h-5 w-5" />
         </NavItem>
 
-        <NavItem href="#" label="Orders">
-          <ShoppingCart className="h-5 w-5" />
+        <NavItem href="/contacts" label="Contacts">
+          <Users2 className="h-5 w-5" />
         </NavItem>
 
         <NavItem href="/" label="Products">
           <Package className="h-5 w-5" />
         </NavItem>
 
-        <NavItem href="/customers" label="Customers">
-          <Users2 className="h-5 w-5" />
-        </NavItem>
-
-        <NavItem href="#" label="Analytics">
+        <NavItem href="/compliance" label="Compliance">
           <LineChart className="h-5 w-5" />
         </NavItem>
+
+        {/* <NavItem href="#" label="Analytics">
+          <LineChart className="h-5 w-5" />
+        </NavItem> */}
       </nav>
       <nav className="mt-auto flex flex-col items-center gap-4 px-2 sm:py-5">
         <Tooltip>
@@ -137,8 +137,8 @@ function MobileNav() {
             href="#"
             className="flex items-center gap-4 px-2.5 text-muted-foreground hover:text-foreground"
           >
-            <ShoppingCart className="h-5 w-5" />
-            Orders
+            <Users2 className="h-5 w-5" />
+            Contacts
           </Link>
           <Link
             href="#"
@@ -151,8 +151,8 @@ function MobileNav() {
             href="#"
             className="flex items-center gap-4 px-2.5 text-muted-foreground hover:text-foreground"
           >
-            <Users2 className="h-5 w-5" />
-            Customers
+            <LineChart className="h-5 w-5" />
+            Compliance
           </Link>
           <Link
             href="#"
