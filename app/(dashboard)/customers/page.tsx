@@ -1,4 +1,4 @@
-"use client"; // Add this directive at the top of the file
+"use client";
 
 import { useEffect, useState } from 'react';
 import {
@@ -10,23 +10,21 @@ import {
 } from '@/components/ui/card';
 
 export default function CustomersPage() {
-  // State to store the real-time transcription data
   const [transcript, setTranscript] = useState<string>("");
 
   useEffect(() => {
-    // Create a WebSocket connection to the Node.js server
-    const webSocket = new WebSocket('ws://localhost:8080'); // Ensure this is the correct WebSocket server URL
+    const webSocket = new WebSocket('ws://localhost:8080');
 
     // Listen for incoming WebSocket messages
     webSocket.onmessage = function (msg) {
       const data = JSON.parse(msg.data);
       if (data.event === 'interim-transcription') {
-        // Update the transcript in the state
-        setTranscript((prevTranscript) => prevTranscript + ' ' + data.text);
+        // Update the state with the latest transcript, replacing the previous one
+        setTranscript(data.text);
       }
     };
 
-    // Clean up WebSocket connection when the component unmounts
+    // Close WebSocket connection when the component is unmounted
     return () => {
       webSocket.close();
     };
@@ -41,32 +39,10 @@ export default function CustomersPage() {
         </CardDescription>
       </CardHeader>
       <CardContent>
-        {/* Display the real-time transcript */}
+        {/* Display the latest line of the transcript */}
         <p>{transcript}</p>
       </CardContent>
     </Card>
   );
 }
 
-
-
-
-// import {
-//   Card,
-//   CardContent,
-//   CardDescription,
-//   CardHeader,
-//   CardTitle
-// } from '@/components/ui/card';
-
-// export default function CustomersPage() {
-//   return (
-//     <Card>
-//       <CardHeader>
-//         <CardTitle>Customers</CardTitle>
-//         <CardDescription>View all customers and their orders.</CardDescription>
-//       </CardHeader>
-//       <CardContent></CardContent>
-//     </Card>
-//   );
-// }
