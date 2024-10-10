@@ -13,6 +13,32 @@ export default function CustomersPage() {
   const [transcript, setTranscript] = useState<string>("");
   const [spamAnalysis, setSpamAnalysis] = useState<string>("Awaiting Analysis...");
 
+  // Determine the color based on spam analysis
+  const getAnalysisColor = (analysis: string) => {
+    switch (analysis.toLowerCase()) {
+      case "high":
+        return "bg-red-200 border-red-400";
+      case "medium":
+        return "bg-yellow-200 border-yellow-400";
+      case "low":
+        return "bg-gray-200 border-gray-400";
+      default:
+        return "bg-gray-200 border-gray-400";
+    }
+  };
+
+  // Get the action text based on spam analysis
+  const getActionText = (analysis: string) => {
+    switch (analysis.toLowerCase()) {
+      case "high":
+        return "Fraudulent call likely. Sending text message to associate.";
+      case "medium":
+        return "Warning: Potential fraudulent call.";
+      default:
+        return "";
+    }
+  };
+
   useEffect(() => {
     const webSocket = new WebSocket('ws://localhost:8080');
 
@@ -33,22 +59,36 @@ export default function CustomersPage() {
   }, []);
 
   return (
-    <Card>
-      <CardHeader>
-        <CardTitle>Live Transcription</CardTitle>
-        <CardDescription>
-          Call your Twilio number, start talking, and watch your words appear in real-time.
-        </CardDescription>
-      </CardHeader>
-      <CardContent>
-        <p>{transcript}</p>
-        <h3>Spam Analysis Result:</h3>
-        <p>{spamAnalysis}</p>
-      </CardContent>
-    </Card>
+    <div className="flex space-x-4">
+      <Card className="flex-1">
+        <CardHeader>
+          <CardTitle>Live Transcription</CardTitle>
+          <CardDescription>
+            Call your Twilio number, start talking, and watch your words appear in real-time.
+          </CardDescription>
+        </CardHeader>
+        <CardContent className="bg-white p-4">
+          <p>{transcript}</p>
+        </CardContent>
+      </Card>
+      <Card className={`flex-1 border ${getAnalysisColor(spamAnalysis)}`}>
+        <CardHeader>
+          <CardTitle>Spam Analysis</CardTitle>
+          <CardDescription>Risk level based on the conversation.</CardDescription>
+        </CardHeader>
+        <CardContent className="p-4">
+          <h3 className="text-lg font-semibold">Risk Level:</h3>
+          <p>{spamAnalysis}</p>
+          {getActionText(spamAnalysis) && (
+            <div className="mt-4 p-2 border-t">
+              <p className="text-sm font-medium">{getActionText(spamAnalysis)}</p>
+            </div>
+          )}
+        </CardContent>
+      </Card>
+    </div>
   );
 }
-
 
 // "use client";
 
@@ -63,6 +103,21 @@ export default function CustomersPage() {
 
 // export default function CustomersPage() {
 //   const [transcript, setTranscript] = useState<string>("");
+//   const [spamAnalysis, setSpamAnalysis] = useState<string>("Awaiting Analysis...");
+
+//   // Determine the color based on spam analysis
+//   const getAnalysisColor = (analysis: string) => {
+//     switch (analysis.toLowerCase()) {
+//       case "low":
+//         return "bg-green-100";
+//       case "medium":
+//         return "bg-yellow-100";
+//       case "high":
+//         return "bg-red-100";
+//       default:
+//         return "bg-gray-100";
+//     }
+//   };
 
 //   useEffect(() => {
 //     const webSocket = new WebSocket('ws://localhost:8080');
@@ -71,8 +126,9 @@ export default function CustomersPage() {
 //     webSocket.onmessage = function (msg) {
 //       const data = JSON.parse(msg.data);
 //       if (data.event === 'interim-transcription') {
-//         // Update the state with the latest transcript, replacing the previous one
 //         setTranscript(data.text);
+//       } else if (data.event === 'spam-analysis') {
+//         setSpamAnalysis(data.result);
 //       }
 //     };
 
@@ -83,18 +139,29 @@ export default function CustomersPage() {
 //   }, []);
 
 //   return (
-//     <Card>
-//       <CardHeader>
-//         <CardTitle>Live Transcription</CardTitle>
-//         <CardDescription>
-//           Call your Twilio number, start talking, and watch your words appear in real-time.
-//         </CardDescription>
-//       </CardHeader>
-//       <CardContent>
-//         {/* Display the latest line of the transcript */}
-//         <p>{transcript}</p>
-//       </CardContent>
-//     </Card>
+//     <div className="flex space-x-4">
+//       <Card className="flex-1">
+//         <CardHeader>
+//           <CardTitle>Live Transcription</CardTitle>
+//           <CardDescription>
+//             Call your Twilio number, start talking, and watch your words appear in real-time.
+//           </CardDescription>
+//         </CardHeader>
+//         <CardContent className="bg-white p-4">
+//           <p>{transcript}</p>
+//         </CardContent>
+//       </Card>
+//       <Card className={`flex-1 ${getAnalysisColor(spamAnalysis)}`}>
+//         <CardHeader>
+//           <CardTitle>Spam Analysis</CardTitle>
+//           <CardDescription>Risk level based on the conversation.</CardDescription>
+//         </CardHeader>
+//         <CardContent className="p-4">
+//           <h3 className="text-lg font-semibold">Risk Level:</h3>
+//           <p>{spamAnalysis}</p>
+//         </CardContent>
+//       </Card>
+//     </div>
 //   );
 // }
 
