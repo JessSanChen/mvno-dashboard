@@ -8,6 +8,9 @@ const fs = require("fs");
 require("dotenv").config(); // Ensure dotenv is loaded
 const OpenAI = require("openai");
 
+const { insertTranscript } = require('./lib/db');
+
+
 // Initialize OpenAI
 const openai = new OpenAI({
   apiKey: process.env.OPENAI_API_KEY, // Your API key from environment variables
@@ -36,20 +39,41 @@ let callStartTime = null;
 let callEndTime = null;
 let callDetails = {};
 
-// Function to save the transcript with additional call details to a JSON file
-function saveTranscriptToFile() {
-  const duration = (callEndTime - callStartTime) / 1000; // duration in seconds
-  const transcriptData = {
-    startTime: new Date(callStartTime).toISOString(),
-    endTime: new Date(callEndTime).toISOString(),
-    duration: `${duration.toFixed(2)} seconds`,
-    callers: callDetails.callers,
-    transcript: fullTranscript.trim(), // Ensure no trailing whitespace
-  };
 
-  fs.writeFileSync(`transcripts/transcript_${Date.now()}.json`, JSON.stringify(transcriptData, null, 2));
-  console.log("Transcript saved to file.");
-}
+// Function to save the transcript to the PostgreSQL database
+async function saveTranscriptToDatabase() {
+    const duration = (callEndTime - callStartTime) / 1000; // duration in seconds
+    const transcriptData = {
+      startTime: new Date(callStartTime).toISOString(),
+      endTime: new Date(callEndTime).toISOString(),
+      duration: `${duration.toFixed(2)} seconds`,
+      callers: callDetails.callers || null, // Set to null if no caller info is available
+      transcript: fullTranscript.trim(), // Ensure no trailing whitespace
+    };
+  
+    try {
+      await insertTranscript(transcriptData);
+      console.log("Transcript saved to database.");
+    } catch (error) {
+      console.error("Error saving transcript to database:", error);
+    }
+  }
+  
+
+// // Function to save the transcript with additional call details to a JSON file
+// function saveTranscriptToFile() {
+//   const duration = (callEndTime - callStartTime) / 1000; // duration in seconds
+//   const transcriptData = {
+//     startTime: new Date(callStartTime).toISOString(),
+//     endTime: new Date(callEndTime).toISOString(),
+//     duration: `${duration.toFixed(2)} seconds`,
+//     callers: callDetails.callers,
+//     transcript: fullTranscript.trim(), // Ensure no trailing whitespace
+//   };
+
+//   fs.writeFileSync(`transcripts/transcript_${Date.now()}.json`, JSON.stringify(transcriptData, null, 2));
+//   console.log("Transcript saved to file.");
+// }
 
 // Function to analyze the transcript for spam detection using OpenAI
 async function analyzeForSpam(transcript) {
@@ -106,7 +130,7 @@ wss.on("connection", function connection(ws) {
   
     ws.on("message", function incoming(message) {
       const msg = JSON.parse(message);
-      console.log("Incoming Message Json: ", msg);
+    //   console.log("Incoming Message Json: ", msg);
       switch (msg.event) {
         case "connected":
           console.log(`A new call has connected.`);
@@ -163,7 +187,8 @@ wss.on("connection", function connection(ws) {
             accumulatedTranscript = ""; // Clear accumulated transcript after appending
           }
   
-          saveTranscriptToFile(); // Save the transcript to a JSON file
+        //   saveTranscriptToFile(); // Save the transcript to a JSON file
+        saveTranscriptToDatabase();
   
           // Reset all global variables after saving the transcript
           finalTranscript = "";
@@ -173,77 +198,6 @@ wss.on("connection", function connection(ws) {
     });
   });
   
-
-// // Handle WebSocket Connection
-// wss.on("connection", function connection(ws) {
-//   console.log("New Connection Initiated");
-//   let recognizeStream = null;
-//   callStartTime = Date.now(); // Record the start time of the call
-//   callDetails = { callers: [] }; // Placeholder for caller information
-
-//   ws.on("message", function incoming(message) {
-//     const msg = JSON.parse(message);
-//     console.log("Incoming Message Json: ", msg);
-//     switch (msg.event) {
-//       case "connected":
-//         console.log(`A new call has connected.`);
-//         // Create Stream to the Google Speech to Text API
-//         recognizeStream = client
-//           .streamingRecognize(request)
-//           .on("error", console.error)
-//           .on("data", data => {
-//             const isFinal = data.results[0].isFinal;
-//             const latestTranscript = data.results[0].alternatives[0].transcript;
-//             console.log("Data printout: ", data);
-
-//             if (isFinal) {
-//               // Append finalized text to the full transcript
-//               fullTranscript += latestTranscript + " ";
-//             } else {
-//               // Update the accumulated transcript with the latest interim results
-//               accumulatedTranscript = latestTranscript;
-//             }
-
-//             // Send the current transcript to all connected clients
-//             wss.clients.forEach(client => {
-//               if (client.readyState === WebSocket.OPEN) {
-//                 client.send(
-//                   JSON.stringify({
-//                     event: "interim-transcription",
-//                     text: fullTranscript + accumulatedTranscript, // Combine finalized and current interim
-//                   })
-//                 );
-//               }
-//             });
-//           });
-//         break;
-//       case "start":
-//         console.log(`Starting Media Stream ${msg.streamSid}`);
-//         if (msg.accountSid) {
-//           callDetails.callers = msg.accountSid;
-//         }
-//         break;
-//       case "media":
-//         if (recognizeStream) {
-//           recognizeStream.write(msg.media.payload);
-//         }
-//         break;
-//       case "stop":
-//         console.log("Call Has Ended");
-//         if (recognizeStream) {
-//           recognizeStream.destroy();
-//         }
-//         callEndTime = Date.now(); // Record the end time of the call
-//         saveTranscriptToFile(); // Save the transcript to a JSON file
-
-//         // Reset all global variables after saving the transcript
-//         finalTranscript = "";
-//         accumulatedTranscript = "";
-//         fullTranscript = "";
-//         break;
-//     }
-//   });
-// });
 
 // Handle HTTP Request
 app.get("/", (req, res) => res.sendFile(path.join(__dirname, "/index.html")));
@@ -256,12 +210,13 @@ app.post("/", (req, res) => {
       <Start>
         <Stream url="wss://${req.headers.host}/"/>
       </Start>
-      <Dial>832-269-3801</Dial>
       <Say>Welcome to Mesa Networks. Please start speaking.</Say>
       <Pause length="60" />
     </Response>
   `);
 });
+{/* <Dial>832-269-3801</Dial> */}
+
 
 console.log("Listening at Port 8080");
 server.listen(8080);
