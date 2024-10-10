@@ -71,7 +71,7 @@ export default function CustomersPage() {
           <p>{transcript}</p>
         </CardContent>
       </Card>
-      <Card className={`flex-1 border ${getAnalysisColor(spamAnalysis)}`}>
+      <Card className={`flex-1 border ${getAnalysisColor(spamAnalysis.split(".")[0])}`}>
         <CardHeader>
           <CardTitle>Spam Analysis</CardTitle>
           <CardDescription>Risk level based on the conversation.</CardDescription>
@@ -79,9 +79,9 @@ export default function CustomersPage() {
         <CardContent className="p-4">
           <h3 className="text-lg font-semibold">Risk Level:</h3>
           <p>{spamAnalysis}</p>
-          {getActionText(spamAnalysis) && (
+          {getActionText(spamAnalysis.split(".")[0]) && (
             <div className="mt-4 p-2 border-t">
-              <p className="text-sm font-medium">{getActionText(spamAnalysis)}</p>
+              <p className="text-sm font-medium">{getActionText(spamAnalysis.split(".")[0])}</p>
             </div>
           )}
         </CardContent>
@@ -89,79 +89,3 @@ export default function CustomersPage() {
     </div>
   );
 }
-
-// "use client";
-
-// import { useEffect, useState } from 'react';
-// import {
-//   Card,
-//   CardContent,
-//   CardDescription,
-//   CardHeader,
-//   CardTitle
-// } from '@/components/ui/card';
-
-// export default function CustomersPage() {
-//   const [transcript, setTranscript] = useState<string>("");
-//   const [spamAnalysis, setSpamAnalysis] = useState<string>("Awaiting Analysis...");
-
-//   // Determine the color based on spam analysis
-//   const getAnalysisColor = (analysis: string) => {
-//     switch (analysis.toLowerCase()) {
-//       case "low":
-//         return "bg-green-100";
-//       case "medium":
-//         return "bg-yellow-100";
-//       case "high":
-//         return "bg-red-100";
-//       default:
-//         return "bg-gray-100";
-//     }
-//   };
-
-//   useEffect(() => {
-//     const webSocket = new WebSocket('ws://localhost:8080');
-
-//     // Listen for incoming WebSocket messages
-//     webSocket.onmessage = function (msg) {
-//       const data = JSON.parse(msg.data);
-//       if (data.event === 'interim-transcription') {
-//         setTranscript(data.text);
-//       } else if (data.event === 'spam-analysis') {
-//         setSpamAnalysis(data.result);
-//       }
-//     };
-
-//     // Close WebSocket connection when the component is unmounted
-//     return () => {
-//       webSocket.close();
-//     };
-//   }, []);
-
-//   return (
-//     <div className="flex space-x-4">
-//       <Card className="flex-1">
-//         <CardHeader>
-//           <CardTitle>Live Transcription</CardTitle>
-//           <CardDescription>
-//             Call your Twilio number, start talking, and watch your words appear in real-time.
-//           </CardDescription>
-//         </CardHeader>
-//         <CardContent className="bg-white p-4">
-//           <p>{transcript}</p>
-//         </CardContent>
-//       </Card>
-//       <Card className={`flex-1 ${getAnalysisColor(spamAnalysis)}`}>
-//         <CardHeader>
-//           <CardTitle>Spam Analysis</CardTitle>
-//           <CardDescription>Risk level based on the conversation.</CardDescription>
-//         </CardHeader>
-//         <CardContent className="p-4">
-//           <h3 className="text-lg font-semibold">Risk Level:</h3>
-//           <p>{spamAnalysis}</p>
-//         </CardContent>
-//       </Card>
-//     </div>
-//   );
-// }
-
