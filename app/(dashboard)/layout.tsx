@@ -32,6 +32,9 @@ import Providers from './providers';
 import { NavItem } from './nav-item';
 import { SearchInput } from './search';
 
+import Image from 'next/image';
+// import Link from 'next/link';
+
 export default function DashboardLayout({
   children
 }: {
@@ -44,7 +47,7 @@ export default function DashboardLayout({
         <div className="flex flex-col sm:gap-4 sm:py-4 sm:pl-14">
           <header className="sticky top-0 z-30 flex h-14 items-center gap-4 border-b bg-background px-4 sm:static sm:h-auto sm:border-0 sm:bg-transparent sm:px-6">
             <MobileNav />
-            <DashboardBreadcrumb />
+            {/* <DashboardBreadcrumb /> */}
             <SearchInput />
             <User />
           </header>
@@ -63,15 +66,20 @@ function DesktopNav() {
     <aside className="fixed inset-y-0 left-0 z-10 hidden w-14 flex-col border-r bg-background sm:flex">
       <nav className="flex flex-col items-center gap-4 px-2 sm:py-5">
         <Link
-          href="https://vercel.com/templates/next.js/admin-dashboard-tailwind-postgres-react-nextjs"
+          href="#"
           className="group flex h-9 w -9 shrink-0 items-center justify-center gap-2 rounded-full bg-primary text-lg font-semibold text-primary-foreground md:h-8 md:w-8 md:text-base"
         >
-          <VercelLogo className="h-3 w-3 transition-all group-hover:scale-110" />
+          {/* <VercelLogo className="h-3 w-3 transition-all group-hover:scale-110" /> */}
+          <img alt="" src="/mesa.jpg" className="h-8 w-8 transition-all group-hover:scale-110" />
           <span className="sr-only">Acme Inc</span>
         </Link>
 
-        <NavItem href="#" label="Dashboard">
+        <NavItem href="/dashboard" label="Dashboard">
           <Home className="h-5 w-5" />
+        </NavItem>
+
+        <NavItem href="/sims" label="Sims">
+          <ShoppingCart className="h-5 w-5" />
         </NavItem>
 
         <NavItem href="/contacts" label="Contacts">
@@ -167,26 +175,26 @@ function MobileNav() {
   );
 }
 
-function DashboardBreadcrumb() {
-  return (
-    <Breadcrumb className="hidden md:flex">
-      <BreadcrumbList>
-        <BreadcrumbItem>
-          <BreadcrumbLink asChild>
-            <Link href="#">Dashboard</Link>
-          </BreadcrumbLink>
-        </BreadcrumbItem>
-        <BreadcrumbSeparator />
-        <BreadcrumbItem>
-          <BreadcrumbLink asChild>
-            <Link href="/transcripts">Transcripts</Link>
-          </BreadcrumbLink>
-        </BreadcrumbItem>
-        {/* <BreadcrumbSeparator />
-        <BreadcrumbItem>
-          <BreadcrumbPage>All Products</BreadcrumbPage>
-        </BreadcrumbItem> */}
-      </BreadcrumbList>
-    </Breadcrumb>
-  );
-}
+// function DashboardBreadcrumb() {
+//   return (
+//     <Breadcrumb className="hidden md:flex">
+//       <BreadcrumbList>
+//         <BreadcrumbItem>
+//           <BreadcrumbLink asChild>
+//             <Link href="#">Dashboard</Link>
+//           </BreadcrumbLink>
+//         </BreadcrumbItem>
+//         <BreadcrumbSeparator />
+//         <BreadcrumbItem>
+//           <BreadcrumbLink asChild>
+//             <Link href="/transcripts">Transcripts</Link>
+//           </BreadcrumbLink>
+//         </BreadcrumbItem>
+//         {/* <BreadcrumbSeparator />
+//         <BreadcrumbItem>
+//           <BreadcrumbPage>All Products</BreadcrumbPage>
+//         </BreadcrumbItem> */}
+//       </BreadcrumbList>
+//     </Breadcrumb>
+//   );
+// }

@@ -64,7 +64,7 @@ export default function CustomersPage() {
         <CardHeader>
           <CardTitle>Live Transcription</CardTitle>
           <CardDescription>
-            Call your Twilio number, start talking, and watch your words appear in real-time.
+            Call your Mesa Networks number, start talking, and watch your words appear in real-time.
           </CardDescription>
         </CardHeader>
         <CardContent className="bg-white p-4">

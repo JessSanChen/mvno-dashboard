@@ -2,7 +2,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { File, PlusCircle } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { TranscriptsTable } from './products-table'; // Update to use TranscriptsTable
-import { getTranscripts, insertTranscript } from '@/lib/db'; // Update to use getTranscripts
+import { getTranscripts } from '@/lib/db'; // Update to use getTranscripts
 
 export default async function TranscriptsPage({
   searchParams
