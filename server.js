@@ -8,8 +8,9 @@ const fs = require("fs");
 require("dotenv").config(); // Ensure dotenv is loaded
 const OpenAI = require("openai");
 
-const { insertTranscript } = require('./lib/db');
+// const { insertTranscript } = require('./lib/db.js');
 
+import { insertTranscript } from './lib/db.js';
 
 // Initialize OpenAI
 const openai = new OpenAI({
