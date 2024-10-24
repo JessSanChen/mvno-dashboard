@@ -94,9 +94,9 @@ function DesktopNav() {
           <LineChart className="h-5 w-5" />
         </NavItem>
 
-        {/* <NavItem href="#" label="Analytics">
-          <LineChart className="h-5 w-5" />
-        </NavItem> */}
+        <NavItem href="/optimization" label="Optimization">
+          <Package2 className="h-5 w-5" />
+        </NavItem>
       </nav>
       <nav className="mt-auto flex flex-col items-center gap-4 px-2 sm:py-5">
         <Tooltip>
@@ -161,6 +161,13 @@ function MobileNav() {
           >
             <LineChart className="h-5 w-5" />
             Compliance
+          </Link>
+          <Link
+            href="#"
+            className="flex items-center gap-4 px-2.5 text-muted-foreground hover:text-foreground"
+          >
+            <LineChart className="h-5 w-5" />
+            Optimization
           </Link>
           <Link
             href="#"
